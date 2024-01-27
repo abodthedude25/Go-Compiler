@@ -31,7 +31,7 @@ You can read through the whole specification [here](./SPECIFICATION.md). Otherwi
 In order to build and compile, you need to install `Make` plus the toolchain of your choice, e.g. `g++` or `clang`. After you setup `Make` with your toolchain of choice, clone the repository and build the project as follows:
 
 ```shell
-git clone https://github.com/joeyvanlierop/golf.git
+git clone https://github.com/abodthedude25/Go-Compiler.git
 cd golf/<YOUR_LANGUAGE_OF_CHOICE>
 make
 ```
@@ -95,10 +95,10 @@ while true {
 
 GoLF programs get executed in four separate steps: lexing, parsing, semantic analysis, and code generation.
 
-- [**Lexing**](./src/lexer.cpp): The process of breaking down the source code into a stream of tokens, which represent the smallest units of meaning in the programming language.
+- [**Lexing**](./src_c++/lexer.cpp): The process of breaking down the source code into a stream of tokens, which represent the smallest units of meaning in the programming language.
 
-- [**Parsing**](./src/parser.cpp): The process of analyzing the sequence of tokens to construct an abstract syntax tree, which represents the structure of the program according to the rules of the programming language's grammar.
+- [**Parsing**](./src_c++/parser.cpp): The process of analyzing the sequence of tokens to construct an abstract syntax tree, which represents the structure of the program according to the rules of the programming language's grammar.
 
-- [**Semantic Analysis**](./src/semantic.cpp): Performs a series of checks on the abstract syntax tree to ensure that it conforms to the rules of the programming language, such as type checking, scoping, and name resolution.
+- [**Semantic Analysis**](./src_c++/semantic.cpp): Performs a series of checks on the abstract syntax tree to ensure that it conforms to the rules of the programming language, such as type checking, scoping, and name resolution.
 
-- [**Code Generation**](./src/code-gen.cpp): Transforms the abstract syntax tree into executable code, generating machine instructions or bytecode for a virtual machine.
+- [**Code Generation**](./src_c++/code-gen.cpp): Transforms the abstract syntax tree into executable code, generating machine instructions or bytecode for a virtual machine.
