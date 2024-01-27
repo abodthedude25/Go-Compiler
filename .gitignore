@@ -1,0 +1,5 @@
+test.txt
+*.o
+*.yy.c
+*.d
+golf
