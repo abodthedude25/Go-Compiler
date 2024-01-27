@@ -1,6 +1,6 @@
-Run started on Wed Apr 12 20:00:17 2023
+Run started on Wed Apr 12 14:13:56 2023
 
-Hostname: csx2.cs.ucalgary.ca
+Hostname: linux13-wd.cs.ucalgary.ca
 
 -------------------------------------------------------------------------------
 Running make |
@@ -9,23 +9,69 @@ Running make |
 % /usr/bin/make
 
 STDOUT:
-g++ -c src/golf.cpp
-g++ -c src/lexer.cpp
-g++ -c src/token.cpp
-g++ -c src/logger.cpp
-g++ -c src/input.cpp
-g++ -c src/file_input.cpp
-g++ -c src/repl_input.cpp
-g++ -c src/ast.cpp
-g++ -c src/parser.cpp
-g++ -c src/semantic.cpp
-g++ -c src/symbol_table.cpp
-g++ -c src/record.cpp
-g++ -c src/code_gen.cpp
-g++ -g golf.o lexer.o token.o logger.o input.o file_input.o repl_input.o ast.o parser.o semantic.o symbol_table.o record.o code_gen.o -o golf
+Generating parser using parsespec.y... Done
+Generating scanner using scannersspcec.l... Done
+Generating object ast.o... Done
+Generating object code_generation.o... Done
+Generating object main.o... Done
+Generating object symbol_array.o... Done
+Generating object symbol_stack.o... Done
+Generating object scannersspcec.yy.o... Done
+Generating object parsespec.tab.o... Done
+Generating executable... Done
 
 
 STDERR:
+code_generation.c: In function ‘codeGenTraverse’:
+code_generation.c:814:37: warning: passing argument 1 of ‘sprintf’ from incompatible pointer type [-Wincompatible-pointer-types]
+  814 |                             sprintf(error, "error: function '%s' must return a value\n", tree->children[0]->val.sval);
+      |                                     ^~~~~
+      |                                     |
+      |                                     char **
+In file included from code_generation.h:6,
+                 from code_generation.c:1:
+/usr/include/stdio.h:358:38: note: expected ‘char * restrict’ but argument is of type ‘char **’
+  358 | extern int sprintf (char *__restrict __s,
+      |                     ~~~~~~~~~~~~~~~~~^~~
+code_generation.c:815:39: warning: passing argument 1 of ‘emitError’ from incompatible pointer type [-Wincompatible-pointer-types]
+  815 |                             emitError(error, tree);
+      |                                       ^~~~~
+      |                                       |
+      |                                       char **
+code_generation.c:194:22: note: expected ‘char *’ but argument is of type ‘char **’
+  194 | void emitError(char* string, ASTNode* tree){
+      |                ~~~~~~^~~~~~
+code_generation.c: In function ‘codeGen’:
+code_generation.c:146:22: warning: ‘%d’ directive writing between 1 and 11 bytes into a region of size 9 [-Wformat-overflow=]
+  146 |     sprintf(label, "L%d", labelNum);
+      |                      ^~
+In function ‘getLabel’,
+    inlined from ‘codeGen’ at code_generation.c:247:44:
+code_generation.c:146:20: note: directive argument in the range [-2147483647, 2147483647]
+  146 |     sprintf(label, "L%d", labelNum);
+      |                    ^~~~~
+code_generation.c:146:5: note: ‘sprintf’ output between 3 and 13 bytes into a destination of size 10
+  146 |     sprintf(label, "L%d", labelNum);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+code_generation.c: In function ‘codeGen’:
+code_generation.c:146:22: warning: ‘%d’ directive writing between 1 and 11 bytes into a region of size 9 [-Wformat-overflow=]
+  146 |     sprintf(label, "L%d", labelNum);
+      |                      ^~
+In function ‘getLabel’,
+    inlined from ‘codeGen’ at code_generation.c:281:40:
+code_generation.c:146:20: note: directive argument in the range [-2147483647, 2147483647]
+  146 |     sprintf(label, "L%d", labelNum);
+      |                    ^~~~~
+code_generation.c:146:5: note: ‘sprintf’ output between 3 and 13 bytes into a destination of size 10
+  146 |     sprintf(label, "L%d", labelNum);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+main.c: In function ‘main’:
+main.c:56:5: warning: implicit declaration of function ‘codeGen’ [-Wimplicit-function-declaration]
+   56 |     codeGen(program);
+      |     ^~~~~~~
+main.c:58:5: warning: implicit declaration of function ‘printFileContents’ [-Wimplicit-function-declaration]
+   58 |     printFileContents("./systemCall.s");
+      |     ^~~~~~~~~~~~~~~~~
 
 
 RETURN CODE: 0
@@ -43,11 +89,10 @@ Test: too few arguments |
 % ./golf
 
 STDOUT:
-Usage: ./golf [filename]
 
 
 STDERR:
-
+error: please input a file argument:(
 
 RETURN CODE: 1
 
@@ -58,11 +103,10 @@ Test: too many arguments |
 % ./golf /dev/null /dev/zero
 
 STDOUT:
-Usage: ./golf [filename]
 
 
 STDERR:
-
+error: please input a file argument:(
 
 RETURN CODE: 1
 
@@ -76,7 +120,8 @@ STDOUT:
 
 
 STDERR:
-File /i/do/not/exist not found: "/home/ugb/joseph.vanlierop/Documents/cpsc-411"
+error: Failed to open file /i/do/not/exist
+Error: : No such file or directory
 
 
 RETURN CODE: 1
@@ -439,7 +484,7 @@ error: division by zero
 STDERR:
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: basic Booleans |
@@ -654,7 +699,7 @@ error: function 'foo' must return a value
 STDERR:
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: less obvious division by zero |
@@ -677,7 +722,7 @@ error: division by zero
 STDERR:
 
 
-RETURN CODE: 0
+RETURN CODE: 1
 
 -------------------------------------------------------------------------------
 Test: recursive-descent calculator |
@@ -793,12 +838,20 @@ Test: register blow-out |
 % ./golf /home/profs/aycock/411/TEST/final/gen.t21 > out.s
 
 STDERR:
-error: not enough free registers
 
 
-RETURN CODE: 1
+RETURN CODE: 0
 
-(GoLF compiler unsuccessful, skipping test)
+% /home/profs/aycock/411/bin/spim -file out.s
+
+STDOUT:
+Loaded: /home/profs/aycock/411/sw/share/spim/exceptions.s
+903
+
+STDERR:
+
+
+RETURN CODE: 0
 
 -------------------------------------------------------------------------------
 Test: nested "for" loops |
@@ -1017,115 +1070,115 @@ RETURN CODE: 0
 STDOUT:
 Loaded: /home/profs/aycock/411/sw/share/spim/exceptions.s
 Generation 1:
-0 1 1 1 0 1 1 0 1 0 
-0 0 1 0 0 0 1 0 1 0 
-0 1 0 1 1 1 1 0 0 0 
+0 1 1 1 0 1 0 0 0 0 
+0 0 0 0 0 0 1 0 0 0 
+0 0 0 1 1 0 1 0 0 0 
 0 1 0 1 0 0 1 0 0 0 
 0 1 1 0 0 0 0 1 0 0 
-0 0 1 1 1 1 1 1 0 0 
-0 1 1 0 0 1 1 0 1 0 
-0 1 0 0 1 0 1 1 0 0 
-0 1 1 1 0 0 0 1 0 1 
-0 1 1 0 1 1 0 0 1 1 
-Generation 2:
-0 1 1 1 0 1 1 0 1 0 
-0 0 1 0 0 0 1 0 1 0 
-0 1 0 1 1 1 1 0 0 0 
-1 1 0 1 0 0 1 1 0 0 
+0 0 0 0 1 0 0 1 0 0 
+0 1 1 0 0 0 0 0 1 0 
+0 1 0 0 1 0 0 0 0 0 
 0 1 1 0 0 0 0 1 0 0 
-0 0 1 1 1 1 1 1 1 0 
-0 1 1 0 0 1 1 0 1 0 
-1 1 0 0 1 0 1 1 0 0 
-1 1 1 1 0 0 0 1 0 1 
-0 1 1 0 1 1 0 0 1 1 
+0 1 1 0 1 0 0 0 1 0 
+Generation 2:
+0 0 1 0 0 0 0 0 0 0 
+0 0 0 0 0 0 1 0 0 0 
+0 0 1 1 1 0 1 1 0 0 
+0 1 0 1 1 1 1 1 0 0 
+0 1 1 1 0 0 1 1 0 0 
+0 0 0 1 0 0 0 1 1 0 
+0 1 1 1 0 0 0 0 0 0 
+1 0 0 1 0 0 0 0 0 0 
+1 0 0 0 0 0 0 0 0 0 
+0 1 1 1 0 0 0 0 0 0 
 Generation 3:
-0 1 1 1 0 1 1 0 1 0 
-0 0 1 0 0 0 1 0 1 0 
-1 1 0 1 1 1 1 0 0 0 
-1 1 0 1 0 0 1 1 0 0 
-1 1 1 0 0 0 0 1 0 0 
-0 0 1 1 1 1 1 1 1 0 
-1 1 1 0 0 1 1 0 1 0 
-1 1 0 0 1 0 1 1 0 0 
-1 1 1 1 0 0 0 1 0 1 
-1 1 1 0 1 1 0 0 1 1 
+0 0 0 0 0 0 0 0 0 0 
+0 0 1 0 0 1 1 1 0 0 
+0 0 1 0 0 0 0 0 0 0 
+0 1 0 0 0 0 0 0 1 0 
+0 1 0 0 0 0 0 0 0 0 
+0 0 0 0 1 0 1 1 1 0 
+0 1 0 1 1 0 0 0 0 0 
+1 0 0 1 0 0 0 0 0 0 
+1 0 0 1 0 0 0 0 0 0 
+0 1 1 0 0 0 0 0 0 0 
 Generation 4:
-0 1 1 1 0 1 1 0 1 0 
-1 0 1 0 0 0 1 0 1 0 
-1 1 0 1 1 1 1 0 0 0 
-1 1 0 1 0 0 1 1 0 0 
-1 1 1 0 0 0 0 1 0 0 
-0 0 1 1 1 1 1 1 1 0 
-1 1 1 0 0 1 1 0 1 0 
-1 1 0 0 1 0 1 1 0 0 
-1 1 1 1 0 0 0 1 0 1 
-1 1 1 0 1 1 0 0 1 1 
+0 0 0 0 0 0 1 0 0 0 
+0 0 0 0 0 0 1 0 0 0 
+0 1 1 0 0 0 1 1 0 0 
+0 1 1 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 1 0 
+0 0 1 1 1 1 0 1 0 0 
+0 0 1 1 1 1 0 1 0 0 
+1 1 0 1 0 0 0 0 0 0 
+1 0 0 1 0 0 0 0 0 0 
+0 1 1 0 0 0 0 0 0 0 
 Generation 5:
-0 1 1 1 0 1 1 0 1 0 
-1 0 1 0 0 0 1 0 1 0 
-1 1 0 1 1 1 1 0 0 0 
-1 1 0 1 0 0 1 1 0 0 
-1 1 1 0 0 0 0 1 0 0 
-0 0 1 1 1 1 1 1 1 0 
-1 1 1 0 0 1 1 0 1 0 
-1 1 0 0 1 0 1 1 0 0 
-1 1 1 1 0 0 0 1 0 1 
-1 1 1 0 1 1 0 0 1 1 
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 1 1 0 0 0 
+0 1 1 0 0 0 1 1 0 0 
+0 1 1 0 0 0 0 1 0 0 
+0 1 0 0 1 0 0 0 0 0 
+0 0 1 0 0 1 0 1 1 0 
+0 0 0 0 0 1 0 0 0 0 
+1 1 0 0 0 0 0 0 0 0 
+1 0 0 1 0 0 0 0 0 0 
+0 1 1 0 0 0 0 0 0 0 
 Generation 6:
-0 1 1 1 0 1 1 0 1 0 
-1 0 1 0 0 0 1 0 1 0 
-1 1 0 1 1 1 1 0 0 0 
-1 1 0 1 0 0 1 1 0 0 
-1 1 1 0 0 0 0 1 0 0 
-0 0 1 1 1 1 1 1 1 0 
-1 1 1 0 0 1 1 0 1 0 
-1 1 0 0 1 0 1 1 0 0 
-1 1 1 1 0 0 0 1 0 1 
-1 1 1 0 1 1 0 0 1 1 
+0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 1 1 1 0 0 
+0 1 1 0 0 1 0 1 0 0 
+1 0 0 1 0 0 1 1 0 0 
+0 1 0 1 0 0 1 1 1 0 
+0 0 0 0 1 1 1 0 0 0 
+0 1 0 0 0 0 1 0 0 0 
+1 1 0 0 0 0 0 0 0 0 
+1 0 0 0 0 0 0 0 0 0 
+0 1 1 0 0 0 0 0 0 0 
 Generation 7:
-0 1 1 1 0 1 1 0 1 0 
-1 0 1 0 0 0 1 0 1 0 
-1 1 0 1 1 1 1 0 0 0 
-1 1 0 1 0 0 1 1 0 0 
-1 1 1 0 0 0 0 1 0 0 
-0 0 1 1 1 1 1 1 1 0 
-1 1 1 0 0 1 1 0 1 0 
-1 1 0 0 1 0 1 1 0 0 
-1 1 1 1 0 0 0 1 0 1 
-1 1 1 0 1 1 0 0 1 1 
+0 0 0 0 0 0 1 0 0 0 
+0 0 0 0 0 1 0 1 0 0 
+0 1 1 0 1 1 0 0 1 0 
+1 0 0 1 1 1 0 0 0 0 
+0 0 1 1 0 0 0 0 1 0 
+0 0 1 0 1 0 0 0 0 0 
+1 1 0 0 0 0 1 0 0 0 
+1 1 0 0 0 0 0 0 0 0 
+1 0 1 0 0 0 0 0 0 0 
+0 1 0 0 0 0 0 0 0 0 
 Generation 8:
-0 1 1 1 0 1 1 0 1 0 
-1 0 1 0 0 0 1 0 1 0 
-1 1 0 1 1 1 1 0 0 0 
-1 1 0 1 0 0 1 1 0 0 
-1 1 1 0 0 0 0 1 0 0 
-0 0 1 1 1 1 1 1 1 0 
-1 1 1 0 0 1 1 0 1 0 
-1 1 0 0 1 0 1 1 0 0 
-1 1 1 1 0 0 0 1 0 1 
-1 1 1 0 1 1 0 0 1 1 
+0 0 0 0 0 0 1 0 0 0 
+0 0 0 0 1 1 0 1 0 0 
+0 1 1 0 0 0 0 0 0 0 
+0 0 0 0 0 1 0 0 0 0 
+0 1 1 0 0 1 0 0 0 0 
+0 0 1 0 0 0 0 0 0 0 
+1 0 1 0 0 0 0 0 0 0 
+0 0 1 0 0 0 0 0 0 0 
+1 0 1 0 0 0 0 0 0 0 
+0 1 0 0 0 0 0 0 0 0 
 Generation 9:
-0 1 1 1 0 1 1 0 1 0 
-1 0 1 0 0 0 1 0 1 0 
-1 1 0 1 1 1 1 0 0 0 
-1 1 0 1 0 0 1 1 0 0 
-1 1 1 0 0 0 0 1 0 0 
-0 0 1 1 1 1 1 1 1 0 
-1 1 1 0 0 1 1 0 1 0 
-1 1 0 0 1 0 1 1 0 0 
-1 1 1 1 0 0 0 1 0 1 
-1 1 1 0 1 1 0 0 1 1 
+0 0 0 0 0 1 1 0 0 0 
+0 0 0 0 0 1 1 0 0 0 
+0 0 0 0 1 1 1 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+0 1 1 0 0 0 0 0 0 0 
+0 0 1 1 0 0 0 0 0 0 
+0 0 1 1 0 0 0 0 0 0 
+0 0 1 1 0 0 0 0 0 0 
+0 0 1 0 0 0 0 0 0 0 
+0 1 0 0 0 0 0 0 0 0 
 Generation 10:
-0 1 1 1 0 1 1 0 1 0 
-1 0 1 0 0 0 1 0 1 0 
-1 1 0 1 1 1 1 0 0 0 
-1 1 0 1 0 0 1 1 0 0 
-1 1 1 0 0 0 0 1 0 0 
-0 0 1 1 1 1 1 1 1 0 
-1 1 1 0 0 1 1 0 1 0 
-1 1 0 0 1 0 1 1 0 0 
-1 1 1 1 0 0 0 1 0 1 
-1 1 1 0 1 1 0 0 1 1 
+0 0 0 0 0 1 1 0 0 0 
+0 0 0 0 0 0 0 1 0 0 
+0 0 0 0 1 0 1 0 0 0 
+0 0 0 0 0 1 0 0 0 0 
+0 1 1 1 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
+0 1 0 0 1 0 0 0 0 0 
+0 1 0 0 0 0 0 0 0 0 
+0 1 1 1 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 
 
 
 STDERR:
@@ -1218,5 +1271,5 @@ STDERR:
 
 RETURN CODE: 0
 
-Run ended on Wed Apr 12 20:00:21 2023
+Run ended on Wed Apr 12 14:14:05 2023
 

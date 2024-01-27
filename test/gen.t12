@@ -1,0 +1,18 @@
+func main() {
+        if false != !true {
+                prints("Oops!\n")
+        } else {
+                prints("OK\n")
+	}
+
+	var a int
+	if true {
+	    a = 10
+	} else if false {
+	    a = 20
+	}  else if false {
+	    a = 20
+	} else {
+	    a = 30
+	}
+}
